@@ -9,8 +9,9 @@
     <TabControl
       class="tab-control"
       :titles="['流行', '新款', '精选']"
+      @tabClick="tabClick"
     ></TabControl>
-    <GoodsList :goods="goods['pop'].list"></GoodsList>
+    <GoodsList :goods="showGoods"></GoodsList>
 
     <div>
       <div>1</div>
@@ -97,6 +98,7 @@ export default {
         new: { page: 0, list: [] },
         sell: { page: 0, list: [] },
       },
+      currentType: "pop",
     };
   },
   created() {
@@ -110,6 +112,26 @@ export default {
   },
 
   methods: {
+    /**
+     * 事件监听相关方法
+     */
+    tabClick(index) {
+      switch (index) {
+        case 0:
+          this.currentType = "pop";
+          break;
+        case 1:
+          this.currentType = "new";
+          break;
+        case 2:
+          this.currentType = "sell";
+          break;
+      }
+    },
+
+    /**
+     * 网络请求相关方法
+     */
     getHomeMultidata() {
       getHomeMultidata().then((res) => {
         this.banners = res.data.banner.list;
@@ -122,6 +144,11 @@ export default {
         this.goods[type].list.push(...res.data.list);
         this.goods[type].page += 1;
       });
+    },
+  },
+  computed: {
+    showGoods() {
+      return this.goods[this.currentType].list;
     },
   },
 };
