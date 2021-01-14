@@ -3,7 +3,14 @@
     <NavBar class="home-nav">
       <div slot="center">购物街</div>
     </NavBar>
-    <Scroll class="content">
+    <Scroll
+      class="content"
+      ref="scroll"
+      :probeType="3"
+      @scroll="contentScroll"
+      :pullUpLoad="true"
+      @pullingUp="loadMore"
+    >
       <HomeSwiper :banners="banners"></HomeSwiper>
       <RecommendView :recommends="recommends"></RecommendView>
       <FeatureView></FeatureView>
@@ -14,6 +21,8 @@
       ></TabControl>
       <GoodsList :goods="showGoods"></GoodsList>
     </Scroll>
+
+    <BackTop @click.native="backTopClick" v-show="isShowBackTop"></BackTop>
   </div>
 </template>
 
@@ -26,6 +35,7 @@ import NavBar from "components/common/navbar/NavBar";
 import TabControl from "components/content/tabControl/TabControl";
 import GoodsList from "components/content/goods/GoodsList";
 import Scroll from "components/common/scroll/Scroll";
+import BackTop from "components/content/backTop/BackTop";
 
 import { getHomeMultidata, getHomeGoods } from "network/home";
 
@@ -39,6 +49,7 @@ export default {
     TabControl,
     GoodsList,
     Scroll,
+    BackTop,
   },
   data() {
     return {
@@ -50,6 +61,7 @@ export default {
         sell: { page: 0, list: [] },
       },
       currentType: "pop",
+      isShowBackTop: false,
     };
   },
   created() {
@@ -80,6 +92,21 @@ export default {
       }
     },
 
+    // 返回顶部
+    backTopClick() {
+      this.$refs.scroll.scrollTo(0, 0);
+    },
+
+    // 自定义事件滚动
+    contentScroll(position) {
+      this.isShowBackTop = -position.y > 1000;
+    },
+
+    // 自定义事件上拉加载
+    loadMore() {
+      this.getHomeGoods(this.currentType);
+    },
+
     /**
      * 网络请求相关方法
      */
@@ -94,6 +121,7 @@ export default {
       getHomeGoods(type, page).then((res) => {
         this.goods[type].list.push(...res.data.list);
         this.goods[type].page += 1;
+        this.$refs.scroll.finishPullUp();
       });
     },
   },
@@ -122,7 +150,6 @@ export default {
 }
 
 .tab-control {
-  position: sticky;
   top: 44px;
 }
 
