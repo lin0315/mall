@@ -64,6 +64,7 @@ export default {
       isShowBackTop: false,
     };
   },
+
   created() {
     // 1. 请求多个数据
     this.getHomeMultidata();
@@ -74,7 +75,25 @@ export default {
     this.getHomeGoods("sell");
   },
 
+  mounted() {
+    const refresh = this.debounce(this.$refs.scroll.refresh, 200);
+    this.$bus.$on("itemImageLoad", () => {
+      refresh();
+    });
+  },
+
   methods: {
+    // 防抖函数
+    debounce(func, delay) {
+      let time = null;
+      return function (...args) {
+        if (time) clearTimeout(time);
+        time = setTimeout(() => {
+          func.apply(this, args);
+        }, delay);
+      };
+    },
+
     /**
      * 事件监听相关方法
      */
