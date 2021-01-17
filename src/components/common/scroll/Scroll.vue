@@ -18,7 +18,7 @@ export default {
     },
     pullUpLoad: {
       type: Boolean,
-      default: true,
+      default: false,
     },
   },
   data() {
@@ -35,14 +35,18 @@ export default {
     });
 
     // 2.监听滚动
-    this.scroll.on("scroll", (position) => {
-      this.$emit("scroll", position);
-    });
+    if (this.probeType === 2 || this.probeType === 3) {
+      this.scroll.on("scroll", (position) => {
+        this.$emit("scroll", position);
+      });
+    }
 
-    // 3. 上拉加载
-    this.scroll.on("pullingUp", () => {
-      this.$emit("pullingUp");
-    });
+    // 3. 监听滚动到底部 上拉加载
+    if (this.pullUpLoad) {
+      this.scroll.on("pullingUp", () => {
+        this.$emit("pullingUp");
+      });
+    }
   },
   methods: {
     scrollTo(x, y, time = 400) {
