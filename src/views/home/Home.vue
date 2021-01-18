@@ -76,6 +76,7 @@ export default {
       isShowBackTop: false,
       tabOffsetTop: 0,
       showTabControl: false,
+      save: 0,
     };
   },
 
@@ -94,6 +95,15 @@ export default {
     this.$bus.$on("itemImageLoad", () => {
       refresh();
     });
+  },
+
+  activated() {
+    this.$refs.scroll.scrollTo(0, this.save, 0);
+    this.$refs.scroll.refresh();
+  },
+
+  deactivated() {
+    this.save = this.$refs.scroll.getScrollY();
   },
 
   methods: {
