@@ -12,7 +12,11 @@
       <span>{{ goods.services[goods.services.length - 1].name }}</span>
     </div>
     <div class="info-service">
-      <span v-for="index in goods.services.length - 1" :key="index">
+      <span
+        class="info-service-item"
+        v-for="index in goods.services.length - 1"
+        :key="index"
+      >
         <img :src="goods.services[index - 1].icon" alt="" />
         <span>{{ goods.services[index - 1].name }}</span>
       </span>
@@ -36,16 +40,17 @@ export default {
 
 <style scoped>
 .base-info {
-  padding: 15px 8px 0;
+  padding-top: 15px;
 }
 
 .info-title {
+  padding: 0 8px;
   color: #222;
 }
 
 /* 价格样式 */
 .info-price {
-  margin: 10px 0 20px;
+  margin: 10px 8px 20px;
 }
 .new-price {
   font-size: 24px;
@@ -71,7 +76,7 @@ export default {
 /* 销量那行的样式 */
 .info-other {
   display: flex;
-  padding-bottom: 8px;
+  padding: 0 8px 8px 8px;
   justify-content: space-between;
   font-size: 13px;
   color: #999;
@@ -80,5 +85,20 @@ export default {
 
 /* 退货补运费那行样式 */
 .info-service {
+  padding: 0 8px;
+  display: flex;
+  justify-content: space-between;
+  height: 60px;
+  line-height: 60px;
+  font-size: 13px;
+  color: #333;
+  border-bottom: 5px solid #f2f5f8;
+}
+
+.info-service-item img {
+  position: relative;
+  top: 2px;
+  width: 14px;
+  height: 14px;
 }
 </style>
