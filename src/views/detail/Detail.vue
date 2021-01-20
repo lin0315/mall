@@ -1,22 +1,16 @@
 <template>
-  <div>
-    <DetailNavBar></DetailNavBar>
-    <DetailSwiper :topImages="topImages"></DetailSwiper>
-    <DetailBaseInfo :goods="goods"></DetailBaseInfo>
-    <DetailShopInfo :shop="shop"></DetailShopInfo>
-
-    <ul>
-      <li>1</li>
-      <li>1</li>
-      <li>1</li>
-      <li>1</li>
-      <li>1</li>
-      <li>1</li>
-      <li>1</li>
-      <li>1</li>
-      <li>1</li>
-      <li>1</li>
-    </ul>
+  <div id="detail">
+    <DetailNavBar class="detail-navbar"></DetailNavBar>
+    <Scroll class="content" ref="scroll">
+      <DetailSwiper :topImages="topImages"></DetailSwiper>
+      <DetailBaseInfo :goods="goods"></DetailBaseInfo>
+      <DetailShopInfo :shop="shop"></DetailShopInfo>
+      <DetailGoodsInfo
+        :detailInfo="detailInfo"
+        @imgLoad="imgLoad"
+      ></DetailGoodsInfo>
+      <DetailParamInfo :paramInfo="paramInfo"></DetailParamInfo>
+    </Scroll>
   </div>
 </template>
 
@@ -25,8 +19,12 @@ import DetailNavBar from "./childComps/DetailNavBar";
 import DetailSwiper from "./childComps/DetailSwiper";
 import DetailBaseInfo from "./childComps/DetailBaseInfo";
 import DetailShopInfo from "./childComps/DetailShopInfo";
+import DetailGoodsInfo from "./childComps/DetailGoodsInfo";
+import DetailParamInfo from "./childComps/DetailParamInfo";
 
-import { getDetail, Goods, Shop } from "network/detail";
+import Scroll from "components/common/scroll/Scroll";
+
+import { getDetail, Goods, Shop, GoodsParam } from "network/detail";
 export default {
   name: "Detail",
   components: {
@@ -34,6 +32,9 @@ export default {
     DetailSwiper,
     DetailBaseInfo,
     DetailShopInfo,
+    Scroll,
+    DetailGoodsInfo,
+    DetailParamInfo,
   },
   data() {
     return {
@@ -41,8 +42,12 @@ export default {
       topImages: [],
       goods: {},
       shop: {},
+      detailInfo: {},
+      paramInfo: {},
+      commentInfo: {},
     };
   },
+
   created() {
     // 1. 保存传入的id
     this.iid = this.$route.params.iid;
@@ -62,10 +67,46 @@ export default {
 
       // 3. 获取店铺信息
       this.shop = new Shop(data.shopInfo);
+
+      // 4. 获取详细图片列表数据
+      this.detailInfo = data.detailInfo;
+
+      // 5.参数信息
+      this.paramInfo = new GoodsParam(
+        data.itemParams.info,
+        data.itemParams.rule
+      );
+
+      // 6. 评论信息
+      if (data.rate.list) {
+        this.commentInfo = data.rate.list[0];
+      }
     });
+  },
+  methods: {
+    imgLoad() {
+      this.$refs.scroll.refresh();
+    },
   },
 };
 </script>
 
 <style scoped>
+#detail {
+  position: relative;
+  height: 100vh;
+  z-index: 9;
+  background-color: #fff;
+}
+
+.detail-navbar {
+  position: relative;
+  z-index: 9;
+  background-color: #fff;
+}
+
+.content {
+  height: calc(100% - 44px);
+  overflow: hidden;
+}
 </style>
