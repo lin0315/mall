@@ -10,6 +10,8 @@
         @imgLoad="imgLoad"
       ></DetailGoodsInfo>
       <DetailParamInfo :paramInfo="paramInfo"></DetailParamInfo>
+      <DetailCommentInfo :commentInfo="commentInfo"></DetailCommentInfo>
+      <GoodsList :goods="recommends"></GoodsList>
     </Scroll>
   </div>
 </template>
@@ -21,10 +23,18 @@ import DetailBaseInfo from "./childComps/DetailBaseInfo";
 import DetailShopInfo from "./childComps/DetailShopInfo";
 import DetailGoodsInfo from "./childComps/DetailGoodsInfo";
 import DetailParamInfo from "./childComps/DetailParamInfo";
+import DetailCommentInfo from "./childComps/DetailCommentInfo";
 
 import Scroll from "components/common/scroll/Scroll";
+import GoodsList from "components/content/goods/GoodsList";
 
-import { getDetail, Goods, Shop, GoodsParam } from "network/detail";
+import {
+  getDetail,
+  Goods,
+  Shop,
+  GoodsParam,
+  getRecommend,
+} from "network/detail";
 export default {
   name: "Detail",
   components: {
@@ -35,6 +45,8 @@ export default {
     Scroll,
     DetailGoodsInfo,
     DetailParamInfo,
+    DetailCommentInfo,
+    GoodsList,
   },
   data() {
     return {
@@ -45,12 +57,14 @@ export default {
       detailInfo: {},
       paramInfo: {},
       commentInfo: {},
+      recommends: [],
     };
   },
 
   created() {
     // 1. 保存传入的id
     this.iid = this.$route.params.iid;
+
     // 2.根据id进行详情数据请求
     getDetail(this.iid).then((res) => {
       console.log(res);
@@ -82,7 +96,13 @@ export default {
         this.commentInfo = data.rate.list[0];
       }
     });
+
+    // 3. 请求推荐数据
+    getRecommend().then((res) => {
+      this.recommends = res.data.list;
+    });
   },
+
   methods: {
     imgLoad() {
       this.$refs.scroll.refresh();
