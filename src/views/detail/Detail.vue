@@ -1,7 +1,7 @@
 <template>
   <div id="detail">
-    <DetailNavBar class="detail-navbar"></DetailNavBar>
-    <Scroll class="content" ref="scroll">
+    <DetailNavBar class="detail-navbar" @titleClick="titleClick"></DetailNavBar>
+    <Scroll class="content" ref="scroll" @scroll="contentScroll" :probeType="3">
       <DetailSwiper :topImages="topImages"></DetailSwiper>
       <DetailBaseInfo :goods="goods"></DetailBaseInfo>
       <DetailShopInfo :shop="shop"></DetailShopInfo>
@@ -9,9 +9,12 @@
         :detailInfo="detailInfo"
         @imgLoad="imgLoad"
       ></DetailGoodsInfo>
-      <DetailParamInfo :paramInfo="paramInfo"></DetailParamInfo>
-      <DetailCommentInfo :commentInfo="commentInfo"></DetailCommentInfo>
-      <GoodsList :goods="recommends"></GoodsList>
+      <DetailParamInfo :paramInfo="paramInfo" ref="params"></DetailParamInfo>
+      <DetailCommentInfo
+        :commentInfo="commentInfo"
+        ref="comment"
+      ></DetailCommentInfo>
+      <GoodsList :goods="recommends" ref="recommends"></GoodsList>
     </Scroll>
   </div>
 </template>
@@ -63,6 +66,9 @@ export default {
       paramInfo: {},
       commentInfo: {},
       recommends: [],
+      themeTopYs: [],
+      getThemeTopY: null,
+      currentIndex: 0,
     };
   },
 
@@ -72,7 +78,7 @@ export default {
 
     // 2.根据id进行详情数据请求
     getDetail(this.iid).then((res) => {
-      console.log(res);
+      // console.log(res);
       const data = res.result;
       // 1.获取轮播图数据
       this.topImages = data.itemInfo.topImages;
@@ -106,6 +112,15 @@ export default {
     getRecommend().then((res) => {
       this.recommends = res.data.list;
     });
+
+    // 4.给getThemeTopY赋值
+    this.getThemeTopY = debounce(() => {
+      this.themeTopYs = [];
+      this.themeTopYs.push(0);
+      this.themeTopYs.push(this.$refs.params.$el.offsetTop);
+      this.themeTopYs.push(this.$refs.comment.$el.offsetTop);
+      this.themeTopYs.push(this.$refs.recommends.$el.offsetTop);
+    });
   },
 
   mounted() {},
@@ -116,6 +131,18 @@ export default {
   methods: {
     imgLoad() {
       this.$refs.scroll.refresh();
+
+      this.getThemeTopY();
+    },
+    titleClick(index) {
+      this.$refs.scroll.scrollTo(0, -this.themeTopYs[index], 300);
+    },
+    contentScroll(position) {
+      const positionY = -position.y;
+      let length = this.themeTopYs.length;
+      for (let i = 0; i < length; i++) {
+        // if (this.currentIndex !== i && (i < length-1 && ))
+      }
     },
   },
 };
