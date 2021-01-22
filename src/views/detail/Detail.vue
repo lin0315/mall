@@ -11,7 +11,7 @@
       <GoodsList :goods="recommends" ref="recommends" />
     </Scroll>
     <BackTop @click.native="backTopClick" v-show="isShowBackTop" />
-    <DetailBottomBar />
+    <DetailBottomBar @addToCart="addToCart" />
   </div>
 </template>
 
@@ -151,6 +151,14 @@ export default {
       }
 
       this.isShowBackTop = -position.y > 1000;
+    },
+    addToCart() {
+      const product = {};
+      product.image = this.topImages[0];
+      product.title = this.goods.title;
+      product.desc = this.goods.desc;
+      product.price = this.goods.realPrice;
+      product.id = this.iid;
     },
   },
 };
