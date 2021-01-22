@@ -1,21 +1,17 @@
 <template>
   <div id="detail">
-    <DetailNavBar class="detail-navbar" @titleClick="titleClick"></DetailNavBar>
+    <DetailNavBar class="detail-navbar" @titleClick="titleClick" ref="nav" />
     <Scroll class="content" ref="scroll" @scroll="contentScroll" :probeType="3">
-      <DetailSwiper :topImages="topImages"></DetailSwiper>
-      <DetailBaseInfo :goods="goods"></DetailBaseInfo>
-      <DetailShopInfo :shop="shop"></DetailShopInfo>
-      <DetailGoodsInfo
-        :detailInfo="detailInfo"
-        @imgLoad="imgLoad"
-      ></DetailGoodsInfo>
-      <DetailParamInfo :paramInfo="paramInfo" ref="params"></DetailParamInfo>
-      <DetailCommentInfo
-        :commentInfo="commentInfo"
-        ref="comment"
-      ></DetailCommentInfo>
-      <GoodsList :goods="recommends" ref="recommends"></GoodsList>
+      <DetailSwiper :topImages="topImages" />
+      <DetailBaseInfo :goods="goods" />
+      <DetailShopInfo :shop="shop" />
+      <DetailGoodsInfo :detailInfo="detailInfo" @imgLoad="imgLoad" />
+      <DetailParamInfo :paramInfo="paramInfo" ref="params" />
+      <DetailCommentInfo :commentInfo="commentInfo" ref="comment" />
+      <GoodsList :goods="recommends" ref="recommends" />
     </Scroll>
+    <BackTop @click.native="backTopClick" v-show="isShowBackTop" />
+    <DetailBottomBar />
   </div>
 </template>
 
@@ -27,12 +23,13 @@ import DetailShopInfo from "./childComps/DetailShopInfo";
 import DetailGoodsInfo from "./childComps/DetailGoodsInfo";
 import DetailParamInfo from "./childComps/DetailParamInfo";
 import DetailCommentInfo from "./childComps/DetailCommentInfo";
+import DetailBottomBar from "./childComps/DetailBottomBar";
 
 import Scroll from "components/common/scroll/Scroll";
 import GoodsList from "components/content/goods/GoodsList";
 
 import { debounce } from "common/utils";
-import { itemListenerMixin } from "common/mixin";
+import { itemListenerMixin, backTopMixin } from "common/mixin";
 
 import {
   getDetail,
@@ -53,8 +50,9 @@ export default {
     DetailParamInfo,
     DetailCommentInfo,
     GoodsList,
+    DetailBottomBar,
   },
-  mixins: [itemListenerMixin],
+  mixins: [itemListenerMixin, backTopMixin],
 
   data() {
     return {
@@ -120,6 +118,7 @@ export default {
       this.themeTopYs.push(this.$refs.params.$el.offsetTop);
       this.themeTopYs.push(this.$refs.comment.$el.offsetTop);
       this.themeTopYs.push(this.$refs.recommends.$el.offsetTop);
+      this.themeTopYs.push(Number.MAX_VALUE);
     });
   },
 
@@ -140,9 +139,18 @@ export default {
     contentScroll(position) {
       const positionY = -position.y;
       let length = this.themeTopYs.length;
-      for (let i = 0; i < length; i++) {
-        // if (this.currentIndex !== i && (i < length-1 && ))
+      for (let i = 0; i < length - 1; i++) {
+        if (
+          this.currentIndex !== i &&
+          positionY >= this.themeTopYs[i] &&
+          positionY < this.themeTopYs[i + 1]
+        ) {
+          this.currentIndex = i;
+          this.$refs.nav.currentIndex = this.currentIndex;
+        }
       }
+
+      this.isShowBackTop = -position.y > 1000;
     },
   },
 };
@@ -163,7 +171,7 @@ export default {
 }
 
 .content {
-  height: calc(100% - 44px);
+  height: calc(100% - 44px - 58px);
   overflow: hidden;
 }
 </style>

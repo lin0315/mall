@@ -9,7 +9,7 @@
       @tabClick="tabClick"
       ref="tabControl1"
       v-show="showTabControl"
-    ></TabControl>
+    />
     <Scroll
       class="content"
       ref="scroll"
@@ -18,22 +18,18 @@
       :pullUpLoad="true"
       @pullingUp="loadMore"
     >
-      <HomeSwiper
-        :banners="banners"
-        @swiperImgload="swiperImgload"
-      ></HomeSwiper>
-      <RecommendView :recommends="recommends"></RecommendView>
-      <FeatureView></FeatureView>
+      <HomeSwiper :banners="banners" @swiperImgload="swiperImgload" />
+      <RecommendView :recommends="recommends" />
+      <FeatureView />
       <TabControl
         class=""
         :titles="['流行', '新款', '精选']"
         @tabClick="tabClick"
         ref="tabControl2"
-      ></TabControl>
-      <GoodsList :goods="showGoods"></GoodsList>
+      />
+      <GoodsList :goods="showGoods" />
     </Scroll>
-
-    <BackTop @click.native="backTopClick" v-show="isShowBackTop"></BackTop>
+    <BackTop @click.native="backTopClick" v-show="isShowBackTop" />
   </div>
 </template>
 
@@ -46,11 +42,9 @@ import NavBar from "components/common/navbar/NavBar";
 import TabControl from "components/content/tabControl/TabControl";
 import GoodsList from "components/content/goods/GoodsList";
 import Scroll from "components/common/scroll/Scroll";
-import BackTop from "components/content/backTop/BackTop";
 
 import { getHomeMultidata, getHomeGoods } from "network/home";
-import { debounce } from "common/utils";
-import { itemListenerMixin } from "common/mixin";
+import { itemListenerMixin, backTopMixin } from "common/mixin";
 
 export default {
   name: "Home",
@@ -62,10 +56,9 @@ export default {
     TabControl,
     GoodsList,
     Scroll,
-    BackTop,
     itemImgListener: null,
   },
-  mixins: [itemListenerMixin],
+  mixins: [itemListenerMixin, backTopMixin],
   data() {
     return {
       banners: [],
@@ -124,11 +117,6 @@ export default {
       }
       this.$refs.tabControl1.currentIndex = index;
       this.$refs.tabControl2.currentIndex = index;
-    },
-
-    // 返回顶部
-    backTopClick() {
-      this.$refs.scroll.scrollTo(0, 0);
     },
 
     // 监听scroll滚动
