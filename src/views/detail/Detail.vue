@@ -153,12 +153,16 @@ export default {
       this.isShowBackTop = -position.y > 1000;
     },
     addToCart() {
+      // 1. 获取购物车需要展示的信息
       const product = {};
       product.image = this.topImages[0];
       product.title = this.goods.title;
       product.desc = this.goods.desc;
       product.price = this.goods.realPrice;
       product.id = this.iid;
+
+      // 2.将商品添加到购物车里
+      this.$store.dispatch("addCart", product);
     },
   },
 };
