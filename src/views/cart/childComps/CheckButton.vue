@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div class="icon-selector" :class="{ 'selector-active': checked }">
+    <div class="icon-selector" :class="{ 'selector-active': isChecked }">
       <img src="~/assets/img/cart/tick.svg" alt="" />
     </div>
   </div>
@@ -10,7 +10,7 @@
 export default {
   name: "CheckButton",
   props: {
-    checked: {
+    isChecked: {
       type: Boolean,
       defalut() {
         return false;

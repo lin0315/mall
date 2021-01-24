@@ -3,7 +3,7 @@
     <div class="item-selector">
       <CheckButton
         @click.native="checkClick"
-        :checked="product.checked"
+        :isChecked="product.checked"
       ></CheckButton>
     </div>
     <div class="item-img">
