@@ -5,7 +5,7 @@
       <span class="button-text">全选</span>
     </div>
     <span class="price">合计:￥{{ totalPrice }}</span>
-    <span class="product">去结算({{ checkLength }})</span>
+    <span class="product" @click="productClick">去结算({{ checkLength }})</span>
   </div>
 </template>
 
@@ -43,6 +43,14 @@ export default {
         this.cartList.forEach((item) => (item.checked = false));
       } else {
         this.cartList.forEach((item) => (item.checked = true));
+      }
+    },
+    productClick() {
+      if (
+        this.cartList.length === 0 ||
+        !this.cartList.some((item) => item.checked)
+      ) {
+        this.$toast.show("请选择要购买的商品");
       }
     },
   },
