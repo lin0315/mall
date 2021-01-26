@@ -34,7 +34,7 @@ export default {
   justify-content: center;
   align-items: center;
   font-size: 14px;
-  border-bottom: 10px solid #eeeeee;
+  border-bottom: 8px solid #eeeeee;
 }
 .recommend-item {
   flex: 1;

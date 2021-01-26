@@ -153,6 +153,7 @@ export default {
         this.goods[type].list.push(...res.data.list);
         this.goods[type].page += 1;
         this.$refs.scroll.finishPullUp();
+        this.$refs.scroll.refresh();
       });
     },
   },
