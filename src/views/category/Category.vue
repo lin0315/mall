@@ -3,80 +3,111 @@
     <NavBar class="category-navbar">
       <div slot="center">商品分类</div>
     </NavBar>
-    <div class="category-left"></div>
-    <div class="category-right"></div>
+    <div class="content">
+      <TabMenu :categories="categories" @leftClick="leftClick"></TabMenu>
+      <Scroll id="tab-content">
+        <TabContentCategory :subcategories="subcategories"></TabContentCategory>
+        <TabControl
+          class="good-list"
+          :titles="['综合', '新品', '销量']"
+        ></TabControl>
+        <GoodsList class="good-list" :goods="goodsList"></GoodsList>
+      </Scroll>
+    </div>
   </div>
 </template>
 
 <script>
-import { getCategory } from "network/category";
-
 import NavBar from "components/common/navbar/NavBar";
+import TabControl from "components/content/tabControl/TabControl";
+import GoodsList from "components/content/goods/GoodsList";
+import Scroll from "components/common/scroll/Scroll";
 
-// import BScroll from "better-scroll";
+import TabMenu from "./childComps/TabMenu";
+import TabContentCategory from "./childComps/TabContentCategory";
+
+import {
+  getCategory,
+  getSubcategory,
+  getCategoryDetail,
+} from "network/category";
 
 export default {
   name: "Category",
   components: {
     NavBar,
+    TabMenu,
+    Scroll,
+    TabContentCategory,
+    TabControl,
+    GoodsList,
   },
   data() {
     return {
-      categoryList: [],
-      // scroll: null,
+      categories: [],
+      subcategories: [],
+      goodsList: [],
     };
   },
   created() {
+    // 获取右边分类数据
     getCategory().then((res) => {
-      this.categoryList = res.data.category.list;
-      console.log(this.categoryList);
+      this.categories = res.data.category.list;
+      console.log(this.categories);
     });
   },
-  // 组件创建完后调用
-  // mounted() {
-  //   this.scroll = new BScroll(this.$refs.aaaa, {
-  //     probeType: 3,
-  //     pullUpLoad: true,
-  //   });
+  methods: {
+    leftClick(index) {
+      console.log(index);
+      // 请求子分类数据
+      getSubcategory(this.categories[index].maitKey).then((res) => {
+        // console.log(res);
+        this.subcategories = res.data.list;
 
-  //   this.scroll.on("scroll", (position) => {});
-
-  //   this.scroll.on("pullingUp", () => {
-  //     console.log("上啦加载更多");
-  //   });
-  // },
-  // methods: {
-  //   btnClick() {
-  //     console.log("btnClick");
-  //   },
-  //   divClick() {
-  //     console.log("divClick");
-  //   },
-  // },
+        // 请求推荐数据
+        getCategoryDetail(this.categories[index].miniWallkey, "pop").then(
+          (res) => {
+            console.log(res);
+            this.goodsList = res;
+          }
+        );
+      });
+    },
+  },
 };
 </script>
 
 <style scoped>
 #category {
+  position: relative;
   height: 100vh;
-  display: flex;
 }
 
 .category-navbar {
-  position: fixed;
+  /* position: fixed;
   top: 0;
   left: 0;
-  right: 0;
+  right: 0; */
   background-color: var(--color-tint);
   color: #ffffff;
 }
 
-/* .category-left {
-  width: 100px;
-  background-color: pink;
+.content {
+  position: absolute;
+  display: flex;
+  top: 44px;
+  left: 0;
+  right: 0;
+  bottom: 49px;
+  overflow: hidden;
 }
 
-.category-right {
+#tab-content {
+  height: 100%;
   flex: 1;
-} */
+}
+
+.good-list {
+  width: 50%;
+}
 </style>
