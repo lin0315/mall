@@ -4,6 +4,7 @@
       v-for="(item, index) in goods"
       :key="index"
       :goodsItem="item"
+      class="item"
     >
     </GoodsListItem>
   </div>
@@ -31,7 +32,11 @@ export default {
 .goods-list {
   display: flex;
   flex-wrap: wrap;
+  padding: 5px;
   justify-content: space-around;
-  padding: 3px;
+}
+
+.goods-list .item {
+  width: 48%;
 }
 </style>

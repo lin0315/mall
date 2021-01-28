@@ -5,13 +5,10 @@
     </NavBar>
     <div class="content">
       <TabMenu :categories="categories" @leftClick="leftClick"></TabMenu>
-      <Scroll id="tab-content">
+      <Scroll id="tab-content" ref="scroll">
         <TabContentCategory :subcategories="subcategories"></TabContentCategory>
-        <TabControl
-          class="good-list"
-          :titles="['综合', '新品', '销量']"
-        ></TabControl>
-        <GoodsList class="good-list" :goods="goodsList"></GoodsList>
+        <TabControl :titles="['商品推荐']"></TabControl>
+        <GoodsList :goods="goodsList"></GoodsList>
       </Scroll>
     </div>
   </div>
@@ -50,28 +47,39 @@ export default {
     };
   },
   created() {
-    // 获取右边分类数据
+    // 获取左边分类数据
     getCategory().then((res) => {
       this.categories = res.data.category.list;
-      console.log(this.categories);
+
+      // 右边获取子分类默认值
+      this.leftClick(0);
+    });
+
+    // 2.监听图片加载完成
+    this.$bus.$on("itemImageLoad", () => {
+      this.$refs.scroll.refresh();
     });
   },
+
+  activated() {
+    this.$refs.scroll.refresh();
+  },
+
   methods: {
     leftClick(index) {
-      console.log(index);
+      this.$refs.scroll.scrollTo(0, 0);
+
       // 请求子分类数据
       getSubcategory(this.categories[index].maitKey).then((res) => {
         // console.log(res);
         this.subcategories = res.data.list;
-
-        // 请求推荐数据
-        getCategoryDetail(this.categories[index].miniWallkey, "pop").then(
-          (res) => {
-            console.log(res);
-            this.goodsList = res;
-          }
-        );
       });
+      // 请求推荐数据
+      getCategoryDetail(this.categories[index].miniWallkey, "pop").then(
+        (res) => {
+          this.goodsList = res;
+        }
+      );
     },
   },
 };
@@ -84,10 +92,6 @@ export default {
 }
 
 .category-navbar {
-  /* position: fixed;
-  top: 0;
-  left: 0;
-  right: 0; */
   background-color: var(--color-tint);
   color: #ffffff;
 }
@@ -105,9 +109,5 @@ export default {
 #tab-content {
   height: 100%;
   flex: 1;
-}
-
-.good-list {
-  width: 50%;
 }
 </style>

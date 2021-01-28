@@ -42,8 +42,10 @@ export default {
 
 <style scoped>
 .goods-item {
-  width: 48%;
+  padding-bottom: 40px;
+  position: relative;
 }
+
 .goods-item img {
   width: 100%;
   border-radius: 5px;
@@ -51,31 +53,35 @@ export default {
 
 .goods-info {
   font-size: 12px;
+  position: absolute;
+  bottom: 5px;
+  left: 0;
+  right: 0;
   overflow: hidden;
   text-align: center;
-  margin: 4px 0 6px;
 }
+
 .goods-info p {
+  overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
-  overflow: hidden;
   margin-bottom: 3px;
 }
 
-.price {
+.goods-info .price {
   color: var(--color-high-text);
   margin-right: 20px;
 }
 
-.collect {
+.goods-info .collect {
   position: relative;
-  margin-left: 2px;
 }
-.collect::before {
+
+.goods-info .collect::before {
   content: "";
   position: absolute;
-  top: -1px;
   left: -15px;
+  top: -1px;
   width: 14px;
   height: 14px;
   background: url("~assets/img/common/collect.svg") 0 0/14px 14px;
