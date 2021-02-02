@@ -1,6 +1,9 @@
 <template>
   <div class="cart-list">
     <Scroll class="content" ref="scroll">
+      <div v-if="!cartLength" class="img-show">
+        <img src="../../../assets/img/cart/empty.jpg" alt="" />
+      </div>
       <CartListItem
         v-for="(item, index) in cartList"
         :key="index"
@@ -28,7 +31,7 @@ export default {
     this.$refs.scroll.refresh();
   },
   computed: {
-    ...mapGetters(["cartList"]),
+    ...mapGetters(["cartList", "cartLength"]),
   },
 };
 </script>
@@ -41,5 +44,10 @@ export default {
 .content {
   height: 100%;
   overflow: hidden;
+}
+
+.img-show img {
+  margin-top: 100px;
+  width: 95%;
 }
 </style>

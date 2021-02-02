@@ -3,6 +3,7 @@
     <NavBar class="nav-bar">
       <div slot="center">购物车({{ cartLength }})</div>
     </NavBar>
+
     <CartList></CartList>
     <CartBottomBar></CartBottomBar>
   </div>
